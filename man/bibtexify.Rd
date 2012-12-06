@@ -1,65 +1,23 @@
 \name{bibtexify}
 \alias{bibtexify}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{bibtexify}
 \usage{
-bibtexify(author, year, title)
+  bibtexify(author, year, title)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{author}{
-%%     ~~Describe \code{author} here~~
-}
-  \item{year}{
-%%     ~~Describe \code{year} here~~
-}
-  \item{title}{
-%%     ~~Describe \code{title} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{author}{name of first author}
+
+  \item{year}{year of publication}
+
+  \item{title}{manuscript title}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  bibtex citation
 }
-\references{
-%% ~put references to the literature/web site here ~
+\description{
+  Convert author, year, title to bibtex citation format
 }
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+\details{
+  Converts author year title to author1999abc format
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (author, year, title) 
-{
-    acronym <- abbreviate(title, minlength = 3, strict = TRUE)
-    paste(author, year, acronym, sep = "")
-  }
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

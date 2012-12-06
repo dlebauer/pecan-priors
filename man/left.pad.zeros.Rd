@@ -1,63 +1,24 @@
 \name{left.pad.zeros}
 \alias{left.pad.zeros}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{Left Pad Zeros}
 \usage{
-left.pad.zeros(num, digits = 5)
+  left.pad.zeros(num, digits = 5)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{num}{
-%%     ~~Describe \code{num} here~~
-}
-  \item{digits}{
-%%     ~~Describe \code{digits} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{num}{number to be padded (integer)}
+
+  \item{digits}{number of digits to add}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  num with zeros to the left
 }
-\references{
-%% ~put references to the literature/web site here ~
+\description{
+  left padded by zeros up to a given number of digits.
+}
+\details{
+  returns a string representing a given number
 }
 \author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+  Carl Davidson
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (num, digits = 5) 
-{
-    format_string <- paste("\%", sprintf("0\%.0f.0f", digits), 
-        sep = "")
-    return(sprintf(format_string, num))
-  }
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

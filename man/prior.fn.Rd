@@ -1,149 +1,51 @@
 \name{prior.fn}
 \alias{prior.fn}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{prior.fn}
 \usage{
-prior.fn(parms, x, alpha, distn, central.tendency = NULL, trait = NULL)
+  prior.fn(parms, x, alpha, distn, central.tendency = NULL,
+    trait = NULL)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{parms}{
-%%     ~~Describe \code{parms} here~~
-}
-  \item{x}{
-%%     ~~Describe \code{x} here~~
-}
-  \item{alpha}{
-%%     ~~Describe \code{alpha} here~~
-}
-  \item{distn}{
-%%     ~~Describe \code{distn} here~~
-}
-  \item{central.tendency}{
-%%     ~~Describe \code{central.tendency} here~~
-}
-  \item{trait}{
-%%     ~~Describe \code{trait} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{parms}{target for optimization}
+
+  \item{x}{vector with c(lcl, ucl, ct) lcl / ucl =
+  confidence limits, ct = entral tendency}
+
+  \item{alpha}{quantile at which lcl/ucl are estimated
+  (e.g. for a 95% CI, alpha = 0.5)}
+
+  \item{distn}{named distribution, one of 'lnorm', 'gamma',
+  'weibull', 'beta'; support for other distributions not
+  currently implemented}
+
+  \item{central.tendency}{one of 'mode', 'median', and
+  'mean'}
+
+  \item{trait}{name of trait, can be used for exceptions
+  (currently used for trait == 'q')}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  parms
 }
-\references{
-%% ~put references to the literature/web site here ~
+\description{
+  Prior fitting function for optimization
 }
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\details{
+  This function is used within \cite{\link{DEoptim}} to
+  parameterize a distribution to the central tendency and
+  confidence interval of a parameter. This function is not
+  very robust; currently it needs to be tweaked when
+  distributions require starting values (e.g. beta, f,
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (parms, x, alpha, distn, central.tendency = NULL, trait = NULL) 
-{
-    if (!distn \%in\% c("lnorm", "gamma", "weibull", "beta")) {
-        stop(paste(distn, "not currently supported by prior.fn"))
-    }
-    if (distn == "lnorm") {
-        mu <- parms[1]
-        sigma <- parms[2]
-        lcl <- mu + qnorm(alpha/2) * sigma
-        ucl <- mu + qnorm(1 - alpha/2) * sigma
-        if (is.null(central.tendency)) {
-            ct <- x[3]
-        }
-        else if (central.tendency == "mean") {
-            ct <- mu - sigma^2
-        }
-        else if (central.tendency == "median") {
-            ct <- qlnorm(0.5, parms[1], parms[2])
-        }
-        x <- log(x)
-    }
-    if (distn == "gamma") {
-        lcl <- qgamma(alpha/2, parms[1], parms[2])
-        ucl <- qgamma(1 - alpha/2, parms[1], parms[2])
-        if (is.null(central.tendency)) {
-            ct <- x[3]
-        }
-        else if (central.tendency == "median") {
-            ct <- qgamma(0.5, parms[1], parms[2])
-        }
-        else if (central.tendency == "mean") {
-            ct <- parms[1]/parms[2]
-        }
-        else if (central.tendency == "mode") {
-            ct <- ifelse(parms[1] > 1, (parms[1] - 1)/parms[2], 
-                0)
-        }
-    }
-    if (distn == "weibull") {
-        lcl <- qweibull(alpha/2, parms[1], parms[2])
-        ucl <- qweibull(1 - alpha/2, parms[1], parms[2])
-        if (is.null(central.tendency)) {
-            ct <- x[3]
-        }
-        else if (central.tendency == "median") {
-            ct <- parms[2] * log(2)^(1/parms[1])
-        }
-        else if (central.tendency == "mean") {
-            ct <- parms[2] * gamma(1 + 1/parms[2])
-        }
-        else if (central.tendency == "mode") {
-            stop("mode calculation not currently supported for weibull distribution")
-        }
-    }
-    if (distn == "beta") {
-        a <- parms[1]
-        if (central.tendency == "mean" & trait == "fineroot2leaf") {
-            b <- a * (1/x[3] - 1)
-        }
-        else {
-            b <- parms[2]
-        }
-        lcl <- qbeta(alpha/2, a, b)
-        ucl <- qbeta(1 - alpha/2, a, b)
-        if (is.null(central.tendency)) {
-            ct <- x[3]
-        }
-        else if (central.tendency == "mean") {
-            ct <- a/(a + b)
-        }
-        else if (central.tendency == "median") {
-            ct <- qbeta(0.5, a, b)
-        }
-        else if (central.tendency == "mode") {
-            ct <- ifelse(a > 1 & b > 1, (a - 1)/(a + b - 2), 
-                0)
-        }
-    }
-    return(sum(abs(c(lcl, ucl, ct) - x)))
-  }
+DEoptim(fn = prior.fn,
+                lower = c(0, 0),
+                upper = c(1000, 1000),
+                x=c(2, 6, 3.3),
+                alpha = 0.05,
+                distn = 'lnorm')$optim$bestmem
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\author{
+  David LeBauer
+}
+

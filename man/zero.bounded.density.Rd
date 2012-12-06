@@ -1,66 +1,38 @@
 \name{zero.bounded.density}
 \alias{zero.bounded.density}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{Zero Bounded Density}
 \usage{
-zero.bounded.density(x, bw = "SJ")
+  zero.bounded.density(x, bw = "SJ")
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
-}
-  \item{bw}{
-%%     ~~Describe \code{bw} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{x}{}
+
+  \item{bw}{The smoothing bandwidth to be used. See
+  'bw.nrd'}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  data frame with back-transformed log density estimate
 }
-\references{
-%% ~put references to the literature/web site here ~
+\description{
+  Zero bounded density using log density transform
+}
+\details{
+  Provides a zero bounded density estimate of a parameter.
+  Kernel Density Estimation used by the
+  \code{\link{stats::density}} function will cause problems
+  at the left hand end because it will put some weight on
+  negative values. One useful approach is to transform to
+  logs, estimate the density using KDE, and then transform
+  back.
 }
 \author{
-%%  ~~who you are~~
+  \href{http://stats.stackexchange.com/q/6588/2750}{Rob
+  Hyndman}
 }
-\note{
-%%  ~~further notes~~
+\references{
+  M. P. Wand, J. S. Marron and D. Ruppert, 1991.
+  Transformations in Density Estimation. Journal of the
+  American Statistical Association. 86(414):343-353
+  \url{http://www.jstor.org/stable/2290569}
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (x, bw = "SJ") 
-{
-    y <- log(x)
-    g <- density(y, bw = bw, n = 1001)
-    xgrid <- exp(g$x)
-    g$y <- c(0, g$y/xgrid)
-    g$x <- c(0, xgrid)
-    return(g)
-  }
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

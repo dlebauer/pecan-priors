@@ -1,63 +1,28 @@
 \name{tabnum}
 \alias{tabnum}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{Table numbers}
 \usage{
-tabnum(x, n = 3)
+  tabnum(x, n = 3)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
-}
-  \item{n}{
-%%     ~~Describe \code{n} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{x}{numeric value or vector}
+
+  \item{n}{number of significant figures}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  x rounded to n significant figures
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\description{
+  Table numbers
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+# convert parameter name to a string appropriate for end-use plotting
+trait.dictionary('growth_resp_factor')
+trait.dictionary('growth_resp_factor')$figid
 
-## The function is currently defined as
-function (x, n = 3) 
-{
-    ans <- as.numeric(signif(x, n))
-    names(ans) <- names(x)
-    return(ans)
-  }
+# get a list of all traits and units in dictionary
+trait.dictionary()[,c('figid', 'units')]
+
+Convert number to n significant digits
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+

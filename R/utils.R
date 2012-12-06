@@ -171,7 +171,8 @@ summarize.result <- function(result) {
 ##' @title Get MCMC stats
 ##' @param mcmc.summary 
 ##' @param sample.size 
-##' @return 
+##' @return summary statistics from the results of a meta analysis
+##' @export
 ##' @author David LeBauer
 get.stats.mcmc <- function(mcmc.summary, sample.size){
   a <- list(n = sample.size)
@@ -205,6 +206,7 @@ get.parm.stat <- function(mcmc.summary, parameter){
 ##' @param A first parameter 
 ##' @param B second parameter
 ##' @return list with mean, variance, and 95 CI
+##' @export
 ##' @author David LeBauer
 ## in future, perhaps create S3 functions:
 ## get.stats.pdf <- pdf.stats
@@ -239,7 +241,7 @@ pdf.stats <- function(distn, A, B) {
 ##' @return a dataframe with id, the name used by ED and BETY for a parameter; fileid, an abbreviated  
 ##'     name used for files; figid, the parameter name written out as best known in english for figures 
 ##'     and tables.
-##'
+##' @export
 ##' @param traits a vector of trait names, if traits = NULL, all of the traits will be returned.
 trait.dictionary <- function(traits = NULL) {
   defs<-data.frame(id = c("plant_min_temp", "c2n_leaf", "dark_respiration_factor", "f_labile", "growth_resp_factor", "leaf_turnover_rate", "leaf_width", "mort2", "nonlocal_dispersal", "fineroot2leaf", "quantum_efficiency", "root_respiration_rate", "root_turnover_rate", "SLA", "stomatal_slope", "Vcmax", "Vm_low_temp", "water_conductance","cuticular_cond","seedling_mortality","r_fract","storage_turnover_rate", "T", "agf_bs"),
@@ -267,6 +269,7 @@ trait.dictionary <- function(traits = NULL) {
 ##' @title Table numbers
 ##' @param x numeric value or vector
 ##' @param n number of significant figures
+##' @export  
 ##' @return x rounded to n significant figures
 tabnum <- function(x, n=3) {
   ans <- as.numeric(signif(x,n))
@@ -279,7 +282,8 @@ tabnum <- function(x, n=3) {
 ##' @title Arrhenius scaling 
 ##' @param observed.value observed value of temperature dependent trait, e.g. Vcmax, root respiration rate
 ##' @param old.temp temperature at which measurement was taken or previously scaled to
-##' @param new.temp temperature to be scaled to, default = 25 C  
+##' @param new.temp temperature to be scaled to, default = 25 C
+##' @export  
 ##' @return numeric value at reference temperature
 arrhenius.scaling <- function(observed.value, old.temp, new.temp = 25){
   return(observed.value / exp (3000 * ( 1 / (273.15 + new.temp) - 1 / (273.15 + old.temp))))
@@ -304,6 +308,7 @@ capitalize <- function(x) {
 ##' @param trait.data data for distribution
 ##' @param dists list of distribution names
 ##' @return best fit distribution
+##' @export
 ##' @author David LeBauer
 fit.dist <- function(trait.data, trait = colnames(trait.data), dists = c('weibull', 'lognormal', 'gamma'), n = NULL) {
   if(class(trait.data) == 'data.frame') trait.data <- trait.data[,1]
@@ -502,7 +507,7 @@ newxtable <- function(x, environment = 'table', table.placement = 'ht',
 ##' Convert author, year, title to bibtex citation format
 ##'
 ##' Converts author year title to author1999abc format
-##' @title 
+##' @title bibtexify
 ##' @param author name of first author
 ##' @param year year of publication
 ##' @param title manuscript title

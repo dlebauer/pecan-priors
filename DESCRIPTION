@@ -1,9 +1,23 @@
 Package: PEcAn.priors
 Type: Package
-Title: What the package does (short line)
+Title: PEcAn module to support prior elicitation
 Version: 1.0
 Date: 2012-12-06
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Author: David LeBauer
+Maintainer: David LeBauer <dlebauer@gmail.com>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
+License: University of Illinois / NCSA + file LICENSE
+Copyright: Energy Biosciences Institute, Authors
+LazyLoad: yes
+Depends:
+    XML,
+    MASS,
+    randtoolbox,
+    rjags,
+    ggplot2 (<= 8.9.0),
+    gridExtra,
+    xtable
+Collate:
+    'plots.R'
+    'utils.R'
+    'write.ma.model.R'

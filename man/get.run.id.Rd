@@ -1,68 +1,25 @@
 \name{get.run.id}
 \alias{get.run.id}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{Get Run ID}
 \usage{
-get.run.id(run.type, index, trait = "", pft.name = "")
+  get.run.id(run.type, index, trait = "", pft.name = "")
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{run.type}{
-%%     ~~Describe \code{run.type} here~~
-}
-  \item{index}{
-%%     ~~Describe \code{index} here~~
-}
-  \item{trait}{
-%%     ~~Describe \code{trait} here~~
-}
-  \item{pft.name}{
-%%     ~~Describe \code{pft.name} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{run.type}{}
+
+  \item{index}{}
+
+  \item{trait}{}
+
+  \item{pft.name}{}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  id representing a model run
 }
-\references{
-%% ~put references to the literature/web site here ~
+\description{
+  returns an id representing a model run
 }
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+\details{
+  for use in model input files and indices
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (run.type, index, trait = "", pft.name = "") 
-{
-    run.id <- paste(pft.name, run.type, trait, index, sep = "")
-    return(abbreviate.run.id.ED(run.id))
-  }
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

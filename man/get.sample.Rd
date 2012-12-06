@@ -1,62 +1,24 @@
 \name{get.sample}
 \alias{get.sample}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{Get Samples}
 \usage{
-get.sample(prior, n)
+  get.sample(prior, n)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{prior}{
-%%     ~~Describe \code{prior} here~~
-}
-  \item{n}{
-%%     ~~Describe \code{n} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{prior}{data.frame with distn, parama, paramb}
+
+  \item{n}{number of samples to return}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  vector with n random samples from prior
 }
-\references{
-%% ~put references to the literature/web site here ~
+\description{
+  Take n random samples from prior
 }
-\author{
-%%  ~~who you are~~
+\details{
+  Like pr.samp, with prior as a single input
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \link{pr.samp}
 }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (prior, n) 
-{
-    do.call(paste("r", prior$distn, sep = ""), list(n, prior$parama, 
-        prior$paramb))
-  }
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

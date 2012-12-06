@@ -432,6 +432,7 @@ create.base.plot <- function() {
 ##' @param prior.density 
 ##' @param base.plot a ggplot object (grob), created by \code{\link{create.base.plot}} if none provided
 ##' @param prior.color color of line to be plotted
+##' @export
 ##' @return plot with prior density added
 ##' @seealso \code{\link{pr.dens}}
 ##' @examples
@@ -771,13 +772,8 @@ get.quantiles.from.density <- function(priordensity){
 ##' @param colour 
 ##' @param size 
 ##' @param linetype 
-##' @return 
+##' @return a plot border
 ##' @author Rudolf Cardinal http://goo.gl/YThRT
-##' @example
-##' ggplot(data=df, aes(x=x, y=y)) + geom_point() + theme_bw() + opts(
-##' panel.border = theme_border(c("bottom","left")) )
-##' ggplot(data=df, aes(x=x, y=y)) + geom_point() + theme_bw() + opts(
-##' panel.border = theme_border(c("b","l")) )
 theme_border <- function(type = c("left", "right", "bottom", "top", 
                            "none"), colour = "black", size = 1, linetype = 1) {
   type <- match.arg(type, several.ok=TRUE) 
