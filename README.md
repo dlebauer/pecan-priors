@@ -9,3 +9,11 @@ The goal of this package is two-fold
 2. to provide access to prior elicitation tools for end users. 
 
 open priors_demo.Rmd to work in R; or priors_demo.html to see results.
+
+
+```r
+plot(1:10, 1:10)
+```
+
+![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1.png) 
+
