@@ -29,7 +29,17 @@ inits <- list(list(.RNG.seed = 1,
 ```
 
 ### MLE Fit to glopnet Specific Leaf Area data  
+
+fit.dist function is in `PEcAn.priors::fit.dist` (See source code: https://github.com/PecanProject/pecan/blob/master/modules/priors/R/priors.R)
+
+```r
+devtools::install_github("pecanproject/pecan/modules/priors")
+```
+
+
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE, cache=TRUE}
+
+# devtools::install("pecanproject/pecan/modules/priors")
 glopnet.data <- read.csv('inst/extdata/glopnet.csv') # Wright et. al. 2004 supplementary file 
 glopnet.grass <- glopnet.data[which(glopnet.data$GF == 'G'), ] # GF = growth form; G=grass 
 
