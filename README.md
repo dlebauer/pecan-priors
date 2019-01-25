@@ -1,4 +1,4 @@
-Title
+Generating Priors based on Data and / or Expert knowledge:
 ========================================================
 
 
@@ -6,9 +6,20 @@ Fitting priors to data (point estimates, all grass species in GLOPNET).
 -------------------------
 
 ### Example: Specific Leaf Area based on all grasses
+```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
+library(PEcAn.priors)
+library(DEoptim)
+set.seed(1)
+iter <-10000 #jags chain and misc simulation length; 1k for test, 10k for real
+inits <- list(list(.RNG.seed = 1,
+                   .RNG.name = "base::Mersenne-Twister"),
+              list(.RNG.seed = 2,
+                   .RNG.name = "base::Mersenne-Twister"),
+              list(.RNG.seed = 3,
+                   .RNG.name = "base::Mersenne-Twister"),
+              list(.RNG.seed = 4,
+                   .RNG.name = "base::Mersenne-Twister"))
 
-```
-## Error in setwd("/home/dlebauer/research/writing/pecan"): cannot change working directory
 ```
 
 ### MLE Fit to glopnet Specific Leaf Area data  
@@ -20,49 +31,54 @@ devtools::install_github("pecanproject/pecan/modules/priors")
 ```
 
 
+```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE, cache=TRUE}
 
-```
-## Error: 'opts' is deprecated. Use 'theme' instead. (Defunct; last used in version 0.9.1)
-```
+# devtools::install("pecanproject/pecan/modules/priors")
+glopnet.data <- read.csv('inst/extdata/glopnet.csv') # Wright et. al. 2004 supplementary file 
+glopnet.grass <- glopnet.data[which(glopnet.data$GF == 'G'), ] # GF = growth form; G=grass 
 
-```
-## Error: 'opts' is deprecated. Use 'theme' instead. (Defunct; last used in version 0.9.1)
+## turnover time (tt)
+glopnet.grass$tt    <- 12/10^(glopnet.grass$log.LL)
+ttdata <- data.frame(tt = glopnet.grass$tt[!is.na(glopnet.grass$tt)])
+## specific leaf area
+##glopnet.grass$sla   <- 1000/ (0.48 * 10^glopnet.grass$log.LMA)
+glopnet.grass$sla   <- 1000/ (10^glopnet.grass$log.LMA)
+sladata <- data.frame(sla = glopnet.grass$sla[!is.na(glopnet.grass$sla)])
+
+
+dists <- c('gamma', 'lognormal','weibull', 'f')
+fit.dist <- PEcAn.priors::fit.dist
+prior.dists <- rbind('SLA' = fit.dist(sladata, dists ), 
+                     'leaf_turnover_rate' = fit.dist(ttdata, dists))
+
+slaprior <- with(prior.dists['SLA',], prior.density(distribution, a, b))
+ttprior <- with(prior.dists['leaf_turnover_rate',], prior.density(distribution, a, b))
+
+prior.figures[['SLA']]                <- priorfig(priordata = sladata, 
+                                                  priordensity = slaprior, 
+                                                  trait = 'SLA')
+prior.figures[['leaf_turnover_rate']] <- priorfig(priordata = ttdata, 
+                                                  priordensity = ttprior, 
+                                                  trait = 'leaf_turnover_rate')
 ```
 The `fit.dist` function takes a vector of point estimates (in this case 125 observations of Specific Leaf Area from GLOPNET database are stored in `sladata`.
 
 First, it prints out the fits of a subset of distributions (the 'f' distribution could not be fit). Second, it prints the 
-
-```r
+```{r}
 dists =  c('gamma', 'lognormal','weibull', 'f')
 fit.dist(sladata, dists )
-```
 
-```
-##              a      b     AIC
-## weibull   2.06 19.000 888.759
-## lognormal 2.65  0.677 923.220
-## gamma     2.95  0.175 899.403
-```
-
-```
-##   distribution    a  b   n
-## 1      weibull 2.06 19 125
 ```
 
 The `priorfig` function visualizes the chosen prior (line), with its mean and 95\%CI (dots) as well as the data used to generate the figure.
 
 
 
-
-```r
+```{r fig.width=7, fig.height=3, results='markup'}
 ## priorfig(priordata = sladata, 
 ##                                                  priordensity = slaprior, 
 ##                                                  trait = 'SLA')
 print(prior.figures$SLA)
-```
-
-```
-## Error in print(prior.figures$SLA): object 'prior.figures' not found
 ```
 
 
@@ -70,8 +86,7 @@ Fitting priors to data with uncertainty estimates (generating posterior predicti
 -------------------------
 ### Vcmax data from Wullschleger (1993)
 
-
-```r
+```{r}
 wullschleger.data <- read.csv('inst/extdata/wullschleger1993updated.csv')
 ```
 
@@ -81,8 +96,7 @@ wullschleger.data <- read.csv('inst/extdata/wullschleger1993updated.csv')
 
 This code is not run here - data are provided in .csv file below. This code requires connection to the BETYdb MySQL server.
 
-
-```r
+```{r eval=FALSE}
 wullschleger.species <- vecpaste(unique(wullschleger.data$AcceptedSymbol))
 ## load functional type data from BETY
 con <- function() {query.bety.con(username = "bety", password = "bety", 
@@ -93,8 +107,7 @@ write.csv(functional.data, 'inst/extdata/wullschleger_join_usdaplants.csv')
 
 Picking up with the Wullschleger dataset joined to USDA Plants functional type classifications ... 
 
-
-```r
+```{r pft_wullschleger}
 functional.data <- read.csv('inst/extdata/wullschleger_join_usdaplants.csv')
 
 subshrubs <- rownames(wullschleger.data) %in% c(grep('Shrub',wullschleger.data$GrowthHabit), grep('Subshrub', wullschleger.data$GrowthHabit))
@@ -154,14 +167,14 @@ wullschleger.vcmax <- ddply(wullschleger.data,
                             obs.prec = 1/sqrt(sum((1/obs.prec)^2)), 
                             ft = mean(ft), # identity
                             n =  sum(n)) [,-1]
+                                        
 ```
 
 ##### Add data from C4 species #########
 
 Few measurements of Vcmax for C4 species were available. 
 ###### Miscanthus: Wang D, Maughan MW, Sun J, Feng X, Miguez FE, Lee DK, Dietze MC, 2011. Impact of canopy nitrogen allocation on growth and photosynthesis of miscanthus (Miscanthus x giganteus). Oecologia, in press
-
-```r
+```{r}
 dwang.vcmax <- c(19.73, 40.35, 33.02, 21.28, 31.45, 27.83, 9.69, 15.99, 18.88, 11.45, 15.81, 27.61, 13, 21.25, 22.01, 10.37, 12.37, 22.8, 12.24, 15.85, 21.93, 23.48, 31.51, 23.16, 18.55, 17.06, 20.27, 30.41)
 dwang.vcmax <- data.frame(Y = mean(dwang.vcmax), 
                           obs.prec = 1/sd(dwang.vcmax),
@@ -175,8 +188,7 @@ Kubien and Sage 2004. Low-temperature photosynthetic performance of a C4 grass a
 
 Data from figure 5 in Kubien and Sage (2004), average across plants grown at 14/10 degrees and 26/22 degrees 
 
-
-```r
+```{r}
 kubien.vcmax <- data.frame(Y = mean(23.4, 24.8), 
                            obs.prec = 1/sqrt(2.6^2 + 2.5^2), 
                            n = 8, 
@@ -188,8 +200,7 @@ kubien.vcmax <- data.frame(Y = mean(23.4, 24.8),
 Massad, Tuzet, Bethenod 2007. The effect of temperature on C4-type leaf photosynthesis parameters. Plant, Cell & Environment 30(9) 1191-1204. DOI: 10.1111/j.1365-3040.2007.01691.x
 
 data from fig 6a
-
-```r
+```{r}
 massad.vcmax.data <- data.frame(vcmax = c(17.1, 17.2, 17.6, 18, 18.3, 18.5, 20.4, 22.9, 22.9, 21.9, 21.8, 22.7, 22.3, 25.3, 24.4, 25.5, 25.5, 24.9, 31.2, 30.8, 31.6, 31.7, 32.5, 34.1, 34.2, 33.9, 35.4, 36, 36, 37.5, 38.2, 38.1, 37.4, 37.7, 25.2, 25.5), 
                                 temp = c(20.5, 24.6, 21, 19, 21.9, 15, 19.6, 14.3, 20.8, 23.4, 24.8, 25.9, 24.1, 22.8, 27.9, 31.7, 35.5, 39.3, 37.9, 42.4, 41.5, 48.7, 33.3, 33.3, 31.5, 39.1, 38.8, 43.3, 50, 38.4, 35.7, 34.4, 31.9, 33.9, 32.1, 33.7))
 massad.vcmax <- with(massad.vcmax.data, arrhenius.scaling(old.temp = temp, 
@@ -211,23 +222,18 @@ all.vcmax.data <- rbind(wullschleger.vcmax,
 
 ##### take a look at the raw data by functional type:
 
-
-```r
+```{r}
 qplot(data = all.vcmax.data, x = factor(ft), y = Y, geom = 'boxplot')
 ```
-
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
 ##### Add unobserved C4 species so JAGS calculates posterior predictive distribution
-
-```r
+```{r}
 vcmax.data <- rbind(all.vcmax.data, 
                     data.frame(Y = NA, obs.prec = NA, ft = 2, n = 1))
 ```
 
 ##### Write and Run Meta-analysis
 
-
-```r
+```{r}
 writeLines(con = "vcmax.prior.bug", 
            text =  "model{  
              for (k in 1:length(Y)){
@@ -253,42 +259,13 @@ j.model  <- jags.model(file = "vcmax.prior.bug",
                        n.adapt = 500, 
                        n.chains = 4,
                        inits = inits)
-```
 
-```
-## Compiling model graph
-##    Resolving undeclared variables
-##    Allocating nodes
-##    Graph Size: 614
-## 
-## Initializing model
-## 
-##   |                                                          |                                                  |   0%  |                                                          |+                                                 |   2%  |                                                          |++                                                |   4%  |                                                          |+++                                               |   6%  |                                                          |++++                                              |   8%  |                                                          |+++++                                             |  10%  |                                                          |++++++                                            |  12%  |                                                          |+++++++                                           |  14%  |                                                          |++++++++                                          |  16%  |                                                          |+++++++++                                         |  18%  |                                                          |++++++++++                                        |  20%  |                                                          |+++++++++++                                       |  22%  |                                                          |++++++++++++                                      |  24%  |                                                          |+++++++++++++                                     |  26%  |                                                          |++++++++++++++                                    |  28%  |                                                          |+++++++++++++++                                   |  30%  |                                                          |++++++++++++++++                                  |  32%  |                                                          |+++++++++++++++++                                 |  34%  |                                                          |++++++++++++++++++                                |  36%  |                                                          |+++++++++++++++++++                               |  38%  |                                                          |++++++++++++++++++++                              |  40%  |                                                          |+++++++++++++++++++++                             |  42%  |                                                          |++++++++++++++++++++++                            |  44%  |                                                          |+++++++++++++++++++++++                           |  46%  |                                                          |++++++++++++++++++++++++                          |  48%  |                                                          |+++++++++++++++++++++++++                         |  50%  |                                                          |++++++++++++++++++++++++++                        |  52%  |                                                          |+++++++++++++++++++++++++++                       |  54%  |                                                          |++++++++++++++++++++++++++++                      |  56%  |                                                          |+++++++++++++++++++++++++++++                     |  58%  |                                                          |++++++++++++++++++++++++++++++                    |  60%  |                                                          |+++++++++++++++++++++++++++++++                   |  62%  |                                                          |++++++++++++++++++++++++++++++++                  |  64%  |                                                          |+++++++++++++++++++++++++++++++++                 |  66%  |                                                          |++++++++++++++++++++++++++++++++++                |  68%  |                                                          |+++++++++++++++++++++++++++++++++++               |  70%  |                                                          |++++++++++++++++++++++++++++++++++++              |  72%  |                                                          |+++++++++++++++++++++++++++++++++++++             |  74%  |                                                          |++++++++++++++++++++++++++++++++++++++            |  76%  |                                                          |+++++++++++++++++++++++++++++++++++++++           |  78%  |                                                          |++++++++++++++++++++++++++++++++++++++++          |  80%  |                                                          |+++++++++++++++++++++++++++++++++++++++++         |  82%  |                                                          |++++++++++++++++++++++++++++++++++++++++++        |  84%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++       |  86%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++      |  88%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++     |  90%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++    |  92%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++++   |  94%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++  |  96%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++++++ |  98%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
-```
-
-```r
 mcmc.object <- coda.samples(model = j.model, variable.names = c('pi.pavi', 'beta.ft', 'diff'),
                             n.iter = iter)
-```
-
-```
-##   |                                                          |                                                  |   0%  |                                                          |*                                                 |   2%  |                                                          |**                                                |   4%  |                                                          |***                                               |   6%  |                                                          |****                                              |   8%  |                                                          |*****                                             |  10%  |                                                          |******                                            |  12%  |                                                          |*******                                           |  14%  |                                                          |********                                          |  16%  |                                                          |*********                                         |  18%  |                                                          |**********                                        |  20%  |                                                          |***********                                       |  22%  |                                                          |************                                      |  24%  |                                                          |*************                                     |  26%  |                                                          |**************                                    |  28%  |                                                          |***************                                   |  30%  |                                                          |****************                                  |  32%  |                                                          |*****************                                 |  34%  |                                                          |******************                                |  36%  |                                                          |*******************                               |  38%  |                                                          |********************                              |  40%  |                                                          |*********************                             |  42%  |                                                          |**********************                            |  44%  |                                                          |***********************                           |  46%  |                                                          |************************                          |  48%  |                                                          |*************************                         |  50%  |                                                          |**************************                        |  52%  |                                                          |***************************                       |  54%  |                                                          |****************************                      |  56%  |                                                          |*****************************                     |  58%  |                                                          |******************************                    |  60%  |                                                          |*******************************                   |  62%  |                                                          |********************************                  |  64%  |                                                          |*********************************                 |  66%  |                                                          |**********************************                |  68%  |                                                          |***********************************               |  70%  |                                                          |************************************              |  72%  |                                                          |*************************************             |  74%  |                                                          |**************************************            |  76%  |                                                          |***************************************           |  78%  |                                                          |****************************************          |  80%  |                                                          |*****************************************         |  82%  |                                                          |******************************************        |  84%  |                                                          |*******************************************       |  86%  |                                                          |********************************************      |  88%  |                                                          |*********************************************     |  90%  |                                                          |**********************************************    |  92%  |                                                          |***********************************************   |  94%  |                                                          |************************************************  |  96%  |                                                          |************************************************* |  98%  |                                                          |**************************************************| 100%
-```
-
-```r
 mcmc.o     <- window(mcmc.object, start = iter/2, thin = 10)
 pi.pavi    <- data.frame(vcmax = unlist(mcmc.o[,'pi.pavi']))
 vcmax.dist <- fit.dist(pi.pavi, n = sum(!is.na(vcmax.data$Y)))
-```
 
-```
-##              a      b     AIC
-## weibull   3.49 24.700 14859.3
-## lognormal 3.04  0.380 15401.9
-## gamma     8.34  0.375 15077.5
-```
-
-```r
 prior.dists   <- rbind(prior.dists, 'Vcmax' = vcmax.dist)
 vcmax.density <- with(vcmax.dist, prior.density(distribution, a, b), xlim = c(0,50))
 
@@ -317,23 +294,48 @@ prior.figures[['Vcmax']] <-
   geom_segment(data = subset(vcmax.data, ft == 2),
                aes(x = mean - se, xend = mean + se, 
                    y = 1:sum(vcmax.c4)/2000, yend = 1:sum(vcmax.c4)/2000))
-```
 
-```
-## Error: 'opts' is deprecated. Use 'theme' instead. (Defunct; last used in version 0.9.1)
-```
-
-```r
 print(prior.figures[['Vcmax']])
-```
-
-```
-## Error in print(prior.figures[["Vcmax"]]): object 'prior.figures' not found
 ```
 
 
 Fitting priors to expert constraint (). 
 -------------------------
 ### Example: Minimum temperature of Photosynthesis
+
+```{r }
+TBD
+```
+
+## Other Examples / Approaches
+
+### Examples
+
+* Estimating priors for the DALEC model in [models/dalec/inst/DALEC_priors.R](https://github.com/PecanProject/pecan/blob/master/models/dalec/inst/DALEC_priors.R
+
+### Package `rriskDistributions`
+
+The [rriskDistributions](http://cran.r-project.org/web/packages/rriskDistributions/index.html) useful for estimating priors ...
+
+as well as individual functions for each distribution such as `get.<somedist>.par` that provide nice diagnostic plots (e.g. compare chosen points to cdf) for example, to compute the parameters of a Gamma distribution that fits a median of 2.5 and has a 95%CI of [1, 10]:  
+
+```{r}
+library(rriskDistributions)
+get.gamma.par(p = c(0.025, 0.50, 0.975), q = c(1, 2.5, 10), tol = 0.1)
+```
+
+
+The function `fit.pecr` provides a GUI to explore the fits of a range of distributions, e.g.:
+
+```{r eval=FALSE}
+fit.perc(p = c(0.1, 0.5, 0.9), q = c(30, 60, 90), tolConv = 0.1)
+```
+
+produces this:
+
+![image of rriskDistributions example that uses GUI](https://dl.dropboxusercontent.com/u/18092793/fit.perc_example.PNG)
+
+
+
 
 
