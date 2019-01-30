@@ -1,7 +1,11 @@
+
+# update
+
+: this code is now being maintained at https://github.com/PecanProject/pecan/edit/master/modules/priors/vignettes/priors_demo.Rmd
+
 Generating Priors based on Data and / or Expert knowledge:
 ========================================================
 
-update: this code is now being maintained at https://github.com/PecanProject/pecan/edit/master/modules/priors/vignettes/priors_demo.Rmd
 
 Fitting priors to data (point estimates, all grass species in GLOPNET). 
 -------------------------
