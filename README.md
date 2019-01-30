@@ -1,7 +1,7 @@
 
-# update
+# update: this code is now being maintained at https://github.com/PecanProject/pecan/edit/master/modules/priors/vignettes/priors_demo.Rmd
 
-: this code is now being maintained at https://github.com/PecanProject/pecan/edit/master/modules/priors/vignettes/priors_demo.Rmd
+---
 
 Generating Priors based on Data and / or Expert knowledge:
 ========================================================
