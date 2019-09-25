@@ -1,5 +1,5 @@
 
-# update: this code is now being maintained at https://github.com/PecanProject/pecan/edit/master/modules/priors/vignettes/priors_demo.Rmd
+# update: this code is now being maintained at https://github.com/PecanProject/pecan/blob/master/modules/priors/vignettes/priors_demo.Rmd
 
 ---
 
@@ -339,7 +339,6 @@ fit.perc(p = c(0.1, 0.5, 0.9), q = c(30, 60, 90), tolConv = 0.1)
 produces this:
 
 ![image of rriskDistributions example that uses GUI](https://dl.dropboxusercontent.com/u/18092793/fit.perc_example.PNG)
-
 
 
 
